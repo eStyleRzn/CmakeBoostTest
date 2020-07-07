@@ -54,7 +54,7 @@ string solution(const string& input)
             break; // Break loop
         }
 
-        const auto ch = *it;
+        const auto& ch = *it;
 
         if ('{' == ch ||'[' == ch || '(' == ch)
         {
