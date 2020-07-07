@@ -10,16 +10,6 @@ using TypeStack = deque<char>;
 using TypeBufferCh = string::const_pointer;
 using TypeBuffer = vector<TypeBufferCh>;
 
-void maxStr(TypeBuffer& strRet, TypeBuffer& strTemp)
-{
-    if (strRet.size() < strTemp.size())
-    {
-        strRet.swap(strTemp);
-    }
-
-    strTemp.clear();
-}
-
 string solution(const string& input)
 {
     if (!input.size())
