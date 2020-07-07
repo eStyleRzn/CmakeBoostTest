@@ -22,16 +22,30 @@ void maxStr(TypeBuffer& strRet, TypeBuffer& strTemp)
 
 string solution(const string& input)
 {
-    TypeBuffer ret;
-
     if (!input.size())
         return "";
 
-    TypeStack resStack;
-    TypeBuffer temp;
+    TypeStack  bracesStack;
+    TypeBuffer seqRet;
+    TypeBuffer seqTemp;
+
+    // Reset current sequence
+    auto reset = [&]() { seqTemp.clear(); bracesStack.clear(); };
+
+    // Curent temp sequence is a valid sequence
+    auto tempIsValid = [&](){ return  0 == bracesStack.size(); };
+
     bool breakIfError{false};
     for (auto it = input.begin(); ; ++it)
     {
+        // Current sequence is valid
+        if (tempIsValid() && (seqRet.size() < seqTemp.size()))
+        {
+            // Evaluate longer sequence
+            seqRet = seqTemp;
+        }
+
+        // Loop
         if (it == input.end())
         {
             it = input.begin();
@@ -40,57 +54,60 @@ string solution(const string& input)
 
         // Detect loop condition
         TypeBufferCh chPtr = &(*it);
-        if (temp.size()  && chPtr == *(temp.begin()))
+        if (seqTemp.size() && chPtr == *(seqTemp.begin()))
         {
-            return "Infinite";
+            if (tempIsValid())
+            {
+                return "Infinite";
+            }
+
+            break; // Break loop
         }
 
         const auto ch = *it;
 
         if ('{' == ch ||'[' == ch || '(' == ch)
         {
-            resStack.push_back(ch);
+            bracesStack.push_back(ch);
         }
         else if ('}' == ch ||']' == ch || ')' == ch)
         {
-            if (!resStack.size())
+            if (!bracesStack.size())
             {
-                maxStr(ret, temp);
-
                 if (breakIfError)
                 {
                     break;
                 }
 
+                reset();
                 continue; // Incorrect start character, continue with next character
             }
 
             // Match charaters
-            const auto& matchCh = resStack.back();
+            const auto& matchCh = bracesStack.back();
 
             if ((matchCh == '{' && '}' == ch) || (matchCh == '[' && ']' == ch) || (matchCh == '(' && ')' == ch))
             {
-                resStack.pop_back();
+                bracesStack.pop_back();
             }
             else
             {
-                maxStr(ret, temp);
-
                 if (breakIfError)
                 {
                     break;
                 }
 
+                reset();
                 continue; // Unmatched characters detected
             }
         }
 
-        // Push character to the temp result
-        temp.push_back(chPtr);
+        // Push character to the temp sequence
+        seqTemp.push_back(chPtr);
     }
 
     string r;
-    for_each(ret.begin(), ret.end(), [&](TypeBufferCh p){
+    for_each(seqRet.begin(), seqRet.end(), [&](TypeBufferCh p){
         r.push_back(*p);
     });
 

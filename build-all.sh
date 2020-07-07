@@ -17,7 +17,7 @@ printf "\\nNumber of cores detected: %s\\n" "${JOBS}"
 export CMAKE=$(command -v cmake 2>/dev/null)
 
 printf "\\n========================================================================\\n"
-printf "======================= Build project =======================\\n"
+printf    "============================= Build project ============================\\n"
 printf "## CMAKE_BUILD_TYPE=%s\\n" "${CMAKE_BUILD_TYPE}"
 
 mkdir $BUILD_DIR
